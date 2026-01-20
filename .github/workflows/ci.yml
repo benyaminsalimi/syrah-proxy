@@ -71,7 +71,7 @@ jobs:
           dart test --coverage=coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: packages/syrah_core/coverage/lcov.info
           flags: syrah_core
@@ -106,7 +106,7 @@ jobs:
           flutter test --coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: packages/syrah_app/coverage/lcov.info
           flags: syrah_app
