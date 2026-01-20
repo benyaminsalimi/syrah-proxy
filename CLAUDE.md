@@ -10,7 +10,7 @@ SyrahProxy is an open-source HTTP/HTTPS debugging proxy built with Flutter for m
 - **Website**: https://proxy.syrah.dev
 - **Repository**: https://github.com/benyaminsalimi/syrah-proxy
 - **License**: MIT
-- **Platform**: macOS (Android coming soon)
+- **Platform**: macOS (Apple Silicon)
 
 ## Tech Stack
 
@@ -88,10 +88,44 @@ flutter clean && flutter pub get
 This script runs:
 1. `melos bootstrap` - Install all dependencies
 2. Code generation for syrah_core
-3. `melos analyze` - Static analysis (must pass with no errors)
+3. `dart analyze` / `flutter analyze` - Static analysis (must pass with no errors)
 4. Tests for syrah_core and syrah_app
 
 **If you don't run this script before pushing, CI will likely fail.**
+
+## Build Verification (REQUIRED)
+
+**ALWAYS verify the macOS build works before pushing:**
+
+```bash
+cd packages/syrah_app
+flutter build macos --release
+```
+
+The build must complete successfully. A successful build produces:
+- `packages/syrah_app/build/macos/Build/Products/Release/SyrahProxy.app`
+
+**Do NOT push if the build fails.** Fix any build errors first.
+
+### Quick pre-push checklist:
+1. ✅ Run `./scripts/check.sh` - all checks pass
+2. ✅ Run `flutter build macos --release` in syrah_app - build succeeds
+3. ✅ Commit and push
+
+### CI Release Pipeline
+
+The CI pipeline **only runs on tags** (not on every push). To create a release:
+
+```bash
+# Create and push a version tag
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This triggers the Release workflow which:
+1. Builds macOS app on M-series runner (macos-14)
+2. Creates DMG installer
+3. Creates GitHub Release with the DMG attached
 
 ### Manual checks (if script fails):
 
