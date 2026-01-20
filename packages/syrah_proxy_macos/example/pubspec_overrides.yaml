@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: syrah_proxy_macos
+dependency_overrides:
+  syrah_proxy_macos:
+    path: ..

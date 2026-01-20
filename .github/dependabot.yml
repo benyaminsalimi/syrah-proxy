@@ -1,0 +1,53 @@
+version: 2
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+
+  # Dart/Flutter packages
+  - package-ecosystem: "pub"
+    directory: "/packages/syrah_app"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+    groups:
+      flutter:
+        patterns:
+          - "flutter*"
+      riverpod:
+        patterns:
+          - "*riverpod*"
+
+  - package-ecosystem: "pub"
+    directory: "/packages/syrah_core"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "pub"
+    directory: "/packages/syrah_proxy_macos"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "pub"
+    directory: "/packages/syrah_proxy_android"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+
+  # Gradle (Android)
+  - package-ecosystem: "gradle"
+    directory: "/packages/syrah_proxy_android/android"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(android)"

@@ -1,0 +1,87 @@
+name: syrah_app
+description: SyrahProxy - Cross-Platform Network Debugging Proxy
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.2.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  flutter_riverpod: ^2.4.0
+  riverpod_annotation: ^2.3.0
+
+  # Navigation
+  go_router: ^14.0.0
+
+  # Models & Serialization
+  freezed_annotation: ^2.4.0
+  json_annotation: ^4.8.0
+
+  # Local Database
+  isar: ^3.1.0
+  isar_flutter_libs: ^3.1.0
+
+  # JavaScript Runtime for Scripting
+  flutter_js: ^0.8.0
+
+  # Code Highlighting
+  flutter_highlight: ^0.7.0
+  highlight: ^0.7.0
+
+  # Diff Algorithm
+  diff_match_patch: ^0.4.1
+
+  # Archive for HAR
+  archive: ^3.4.0
+
+  # File System
+  path_provider: ^2.1.0
+  file_picker: ^10.3.8
+
+  # Utils
+  url_launcher: ^6.2.0
+  uuid: ^4.2.0
+  collection: ^1.18.0
+  intl: ^0.19.0
+
+  # WebSocket for mitmproxy bridge
+  web_socket_channel: ^3.0.0
+
+  # Process management
+  process_run: ^1.2.0
+
+  # macOS status bar icon
+  tray_manager: ^0.2.3
+
+  # Local packages
+  syrah_core:
+    path: ../syrah_core
+  syrah_proxy_macos:
+    path: ../syrah_proxy_macos
+  syrah_proxy_android:
+    path: ../syrah_proxy_android
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.0
+  freezed: ^2.4.0
+  json_serializable: ^6.7.0
+  isar_generator: ^3.1.0
+  riverpod_generator: ^2.3.0
+  mocktail: ^1.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/scripts/
