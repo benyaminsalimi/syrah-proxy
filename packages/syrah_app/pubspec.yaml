@@ -58,7 +58,7 @@ dependencies:
   process_run: ^1.2.0
 
   # macOS status bar icon
-  tray_manager: ^0.2.3
+  tray_manager: ^0.5.2
 
   # Local packages
   syrah_core:
