@@ -1,5 +1,5 @@
 name: syrah_app
-description: SyrahProxy - Cross-Platform Network Debugging Proxy
+description: SyrahProxy - Network Debugging Proxy for macOS
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -65,8 +65,6 @@ dependencies:
     path: ../syrah_core
   syrah_proxy_macos:
     path: ../syrah_proxy_macos
-  syrah_proxy_android:
-    path: ../syrah_proxy_android
 
 dev_dependencies:
   flutter_test:

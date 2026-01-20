@@ -1,8 +1,6 @@
-# melos_managed_dependency_overrides: syrah_core,syrah_proxy_android,syrah_proxy_macos
+# melos_managed_dependency_overrides: syrah_core,syrah_proxy_macos
 dependency_overrides:
   syrah_core:
     path: ../syrah_core
-  syrah_proxy_android:
-    path: ../syrah_proxy_android
   syrah_proxy_macos:
     path: ../syrah_proxy_macos

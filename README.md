@@ -1,12 +1,12 @@
 # SyrahProxy
 
-**Open-source cross-platform network debugging proxy**
+**Open-source network debugging proxy for macOS**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)](https://flutter.dev)
-[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Android-green.svg)]()
+[![Platform](https://img.shields.io/badge/Platform-macOS-green.svg)]()
 
-SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with Flutter, targeting macOS and Android. It provides Proxyman-like functionality with a native platform look.
+SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with Flutter for macOS. It provides Proxyman-like functionality with a native platform look.
 
 **Website**: [proxy.syrah.dev](https://proxy.syrah.dev)
 
@@ -17,9 +17,16 @@ SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with 
 - **Request/Response Viewing** - JSON syntax highlighting, headers, body inspection
 - **Resizable UI** - Adjustable sidebar, request columns, and detail panel
 - **Domain Grouping** - Requests organized by host in sidebar
-- **Pinning** - Pin specific domains or apps to filter traffic
-- **System Proxy** - One-click system proxy configuration (macOS)
+- **Pinning** - Pin specific domains to filter traffic
+- **System Proxy** - One-click system proxy configuration
 - **Certificate Management** - Generate and trust custom CA certificates
+
+### macOS Features
+- Native macOS menu bar integration
+- System tray icon with quick controls
+- Keyboard shortcuts (⌘R to toggle proxy, ⌘K to clear)
+- System proxy configuration
+- Keychain certificate management
 
 ### Coming Soon
 - **Breakpoints** - Pause and modify requests/responses on-the-fly
@@ -29,21 +36,7 @@ SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with 
 - **WebSocket Debugging** - Real-time WebSocket protocol support
 - **Diff Tool** - Side-by-side request/response comparison
 - **Network Throttling** - Simulate slow network conditions
-
-### Platform-Specific Features
-
-#### macOS
-- Native macOS menu bar integration
-- System tray icon with quick controls
-- Keyboard shortcuts (⌘R to toggle proxy, ⌘K to clear)
-- System proxy configuration
-- Keychain certificate management
-
-#### Android
-- Material 3 design
-- VpnService-based traffic capture
-- User certificate installation
-- Background proxy service
+- **Android Support** - Android app coming soon
 
 ## Screenshots
 
@@ -52,9 +45,9 @@ SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with 
 ## Installation
 
 ### Prerequisites
+- macOS 12.0 or later
 - Flutter SDK 3.x or later
-- Xcode 15+ (for macOS)
-- Android Studio (for Android)
+- Xcode 15+
 - Melos for monorepo management
 
 ### Setup
@@ -85,9 +78,7 @@ melos bootstrap
 melos run generate
 ```
 
-### Building the Apps
-
-#### macOS Build
+### Building the App
 
 ```bash
 cd packages/syrah_app
@@ -107,40 +98,6 @@ flutter run -d macos
 Or open the built app:
 ```bash
 open build/macos/Build/Products/Release/SyrahProxy.app
-```
-
-#### Android Build
-
-**Prerequisites:**
-- Android SDK with API level 36 (or your target API)
-- Android emulator running or device connected
-
-```bash
-cd packages/syrah_app
-flutter build apk --debug     # Debug APK
-flutter build apk --release   # Release APK
-```
-
-The built APK will be at:
-- Debug: `build/app/outputs/flutter-apk/app-debug.apk`
-- Release: `build/app/outputs/flutter-apk/app-release.apk`
-
-**Install and Run on Emulator:**
-
-1. Start an Android emulator:
-```bash
-flutter emulators --launch <emulator_id>
-# Or use Android Studio to start an emulator
-```
-
-2. Check available devices:
-```bash
-flutter devices
-```
-
-3. Run directly:
-```bash
-flutter run -d <device_id>
 ```
 
 ### Development Commands
@@ -173,8 +130,7 @@ syrah-proxy/
 │   │   │   │   ├── settings/  # App settings
 │   │   │   │   └── composer/  # Request composer
 │   │   │   └── services/      # mitmproxy bridge, certificates
-│   │   ├── macos/
-│   │   └── android/
+│   │   └── macos/
 │   │
 │   ├── syrah_core/            # Shared Dart models and logic
 │   │   └── lib/
@@ -182,14 +138,11 @@ syrah-proxy/
 │   │       ├── services/      # Business logic
 │   │       └── utils/         # Utilities (HAR, cURL, code gen)
 │   │
-│   ├── syrah_proxy_macos/     # macOS native plugin
-│   │   └── macos/Classes/
-│   │       ├── CertificateAuthority.swift
-│   │       ├── ProxyEngine.swift
-│   │       └── SyrahProxyMacosPlugin.swift
-│   │
-│   └── syrah_proxy_android/   # Android native plugin
-│       └── android/src/main/kotlin/
+│   └── syrah_proxy_macos/     # macOS native plugin
+│       └── macos/Classes/
+│           ├── CertificateAuthority.swift
+│           ├── ProxyEngine.swift
+│           └── SyrahProxyMacosPlugin.swift
 │
 ├── tools/                     # Build tools
 ├── docs/                      # Documentation
@@ -200,7 +153,6 @@ syrah-proxy/
 
 SyrahProxy requires a trusted CA certificate to intercept HTTPS traffic.
 
-### macOS
 1. Open SyrahProxy and click "Trust Certificate" in the toolbar
 2. Click "Generate Certificate" if you don't have one
 3. Click "Install Certificate" - Keychain Access will open
@@ -208,15 +160,6 @@ SyrahProxy requires a trusted CA certificate to intercept HTTPS traffic.
 5. Double-click and select "Always Trust" under Trust settings
 6. Enter your password when prompted
 7. Restart your browser
-
-### Android
-1. Open SyrahProxy and go to Settings → SSL Certificate
-2. Click "Export Certificate"
-3. Go to Settings → Security → Encryption & credentials
-4. Tap "Install a certificate" → "CA certificate"
-5. Select the downloaded .pem file
-
-**Note:** Android 7+ requires additional app configuration to trust user certificates. See [Android Certificate Setup](docs/setup-android.md) for details.
 
 ## Architecture
 

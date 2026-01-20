@@ -4,25 +4,26 @@ This file provides guidance for Claude Code (claude.ai/code) when working with t
 
 ## Project Overview
 
-SyrahProxy is an open-source, cross-platform HTTP/HTTPS debugging proxy built with Flutter. It's designed as a Proxyman alternative, targeting macOS and Android platforms.
+SyrahProxy is an open-source HTTP/HTTPS debugging proxy built with Flutter for macOS. It's designed as a Proxyman alternative.
 
 - **App Name**: SyrahProxy
 - **Website**: https://proxy.syrah.dev
 - **Repository**: https://github.com/benyaminsalimi/syrah-proxy
 - **License**: MIT
+- **Platform**: macOS (Android coming soon)
 
 ## Tech Stack
 
 - **Framework**: Flutter 3.x
 - **State Management**: Riverpod
 - **Proxy Backend**: mitmproxy (bundled as subprocess)
-- **UI**: Material 3 (Android), Native macOS styling
+- **UI**: Native macOS styling
 - **Monorepo**: Melos
 
 ## Project Structure
 
 ```
-netscope/
+syrah-proxy/
 ├── packages/
 │   ├── syrah_app/              # Main Flutter application
 │   │   ├── lib/
@@ -33,12 +34,10 @@ netscope/
 │   │   │   │   ├── settings/   # Settings screens
 │   │   │   │   └── composer/   # Request composer
 │   │   │   └── services/       # Services (mitmproxy bridge, certificates)
-│   │   ├── macos/              # macOS-specific code
-│   │   └── android/            # Android-specific code
+│   │   └── macos/              # macOS-specific code
 │   │
 │   ├── syrah_core/             # Shared Dart models (freezed)
-│   ├── syrah_proxy_macos/      # macOS native plugin
-│   └── syrah_proxy_android/    # Android native plugin
+│   └── syrah_proxy_macos/      # macOS native plugin
 │
 ├── tools/                      # Build tools, mitmproxy download
 └── docs/                       # Documentation
@@ -53,7 +52,7 @@ netscope/
 | `packages/syrah_app/lib/features/home/home_screen.dart` | Main UI with toolbar, sidebar, request list |
 | `packages/syrah_app/lib/features/home/home_controller.dart` | Main state management (Riverpod) |
 | `packages/syrah_app/lib/features/home/widgets/request_list.dart` | Request table with resizable columns |
-| `packages/syrah_app/lib/features/home/widgets/sidebar.dart` | Domain/App tree sidebar |
+| `packages/syrah_app/lib/features/home/widgets/sidebar.dart` | Domain tree sidebar |
 | `packages/syrah_app/lib/features/settings/settings_screen_new.dart` | Active settings screen |
 | `packages/syrah_app/lib/services/mitmproxy_bridge.dart` | mitmproxy WebSocket communication |
 | `packages/syrah_app/lib/services/certificate_service.dart` | CA certificate management |
@@ -71,9 +70,6 @@ flutter build macos --release
 # Run macOS app
 flutter run -d macos
 
-# Build Android APK
-flutter build apk --release
-
 # Code generation (freezed models)
 melos run generate
 
@@ -84,7 +80,7 @@ flutter clean && flutter pub get
 ## Architecture Notes
 
 ### mitmproxy Integration
-- SyrahProxy uses mitmproxy as the proxy engine (not custom Swift/Kotlin)
+- SyrahProxy uses mitmproxy as the proxy engine (not custom Swift)
 - mitmproxy runs as a subprocess
 - Communication via WebSocket (MitmproxyBridge)
 - Python addon (`syrah_bridge.py`) handles flow events
@@ -100,7 +96,7 @@ flutter clean && flutter pub get
 
 ### UI Components
 - **Toolbar**: Toggle sidebar, app logo, proxy controls, certificate trust
-- **Sidebar**: Domain tree, app list, pinning, filters
+- **Sidebar**: Domain tree, pinning, filters
 - **Request List**: Resizable columns with headers
 - **Detail Panel**: Request/response details (resizable)
 
@@ -142,7 +138,6 @@ flutter test test/home_controller_test.dart
 ## Known Issues
 
 - TLS interception requires mitmproxy CA certificate to be trusted
-- Android 7+ requires special handling for user certificates
 - Some features are placeholders (breakpoints, map local/remote, scripting)
 
 ## Resources
