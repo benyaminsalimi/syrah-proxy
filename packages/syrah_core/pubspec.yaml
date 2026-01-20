@@ -17,7 +17,7 @@ dependencies:
   # Utils
   uuid: ^4.2.0
   collection: ^1.18.0
-  archive: ^3.4.0
+  archive: ^4.0.0
   crypto: ^3.0.3
 
 dev_dependencies:
