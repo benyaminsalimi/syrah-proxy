@@ -77,6 +77,49 @@ melos run generate
 flutter clean && flutter pub get
 ```
 
+## Pre-Commit Checks (IMPORTANT)
+
+**ALWAYS run the check script before pushing to ensure CI will pass:**
+
+```bash
+./scripts/check.sh
+```
+
+This script runs:
+1. `melos bootstrap` - Install all dependencies
+2. Code generation for syrah_core
+3. `melos analyze` - Static analysis (must pass with no errors)
+4. Tests for syrah_core and syrah_app
+
+**If you don't run this script before pushing, CI will likely fail.**
+
+### Manual checks (if script fails):
+
+```bash
+# Bootstrap
+melos bootstrap
+
+# Generate code
+cd packages/syrah_core && dart run build_runner build --delete-conflicting-outputs && cd ../..
+
+# Analyze (must have 0 errors - warnings/info are OK)
+melos analyze
+
+# Run tests
+cd packages/syrah_core && dart test && cd ../..
+cd packages/syrah_app && flutter test && cd ../..
+```
+
+### Common CI failures and fixes:
+
+| Error | Fix |
+|-------|-----|
+| `undefined_named_parameter` | Check if API changed (e.g., `TextField` vs `TextFormField`) |
+| `undefined_getter` / `undefined_class` | Check for typos or missing imports |
+| `new_with_undefined_constructor_default` | Class uses singleton pattern, use `.instance` |
+| Old package references (netscope_*) | Update to syrah_* names |
+| Missing directory in pubspec assets | Create the directory with `.gitkeep` |
+
 ## Architecture Notes
 
 ### mitmproxy Integration

@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _syrahProxyMacosPlugin = SyrahProxyMacOS();
+  final _syrahProxyMacosPlugin = SyrahProxyMacOS.instance;
 
   @override
   void initState() {

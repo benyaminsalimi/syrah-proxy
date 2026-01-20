@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar/isar.dart';
 
 part 'http_request.freezed.dart';
 part 'http_request.g.dart';
