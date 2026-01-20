@@ -286,7 +286,7 @@ class _BreakpointHitDialogState extends ConsumerState<BreakpointHitDialog>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
+            TextFormField(
               initialValue: statusCode.toString(),
               decoration: const InputDecoration(
                 labelText: 'Status Code',
@@ -295,7 +295,7 @@ class _BreakpointHitDialogState extends ConsumerState<BreakpointHitDialog>
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 16),
-            TextField(
+            TextFormField(
               initialValue: response['statusMessage'] as String? ?? '',
               decoration: const InputDecoration(
                 labelText: 'Status Message',

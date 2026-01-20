@@ -459,7 +459,7 @@ class _DiffScreenState extends ConsumerState<DiffScreen>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(
-                  isDifferent ? Icons.not_equal : Icons.check,
+                  isDifferent ? Icons.close : Icons.check,
                   size: 16,
                   color: isDifferent ? AppColors.error : AppColors.success,
                 ),

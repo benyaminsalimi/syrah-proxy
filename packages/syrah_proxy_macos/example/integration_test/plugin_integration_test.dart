@@ -10,13 +10,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:netscope_proxy_macos/netscope_proxy_macos.dart';
+import 'package:syrah_proxy_macos/syrah_proxy_macos.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final NetscopeProxyMacos plugin = NetscopeProxyMacos();
+    final SyrahProxyMacOS plugin = SyrahProxyMacOS();
     final String? version = await plugin.getPlatformVersion();
     // The version string depends on the host platform running the test, so
     // just assert that some non-empty string is returned.

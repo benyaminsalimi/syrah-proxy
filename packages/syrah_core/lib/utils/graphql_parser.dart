@@ -55,12 +55,10 @@ class GraphQLParser {
       if (json is Map) {
         // Standard GraphQL request has 'query' field
         if (json.containsKey('query')) return true;
-
+      } else if (json is List && json.isNotEmpty) {
         // Batched GraphQL requests
-        if (json is List && json.isNotEmpty) {
-          final first = json.first;
-          if (first is Map && first.containsKey('query')) return true;
-        }
+        final first = json.first;
+        if (first is Map && first.containsKey('query')) return true;
       }
     } catch (_) {
       // Not JSON
