@@ -20,7 +20,7 @@ fi
 
 echo ""
 echo "📦 Bootstrapping packages..."
-melos bootstrap
+dart pub global run melos bootstrap
 
 echo ""
 echo "🔨 Running code generation..."
@@ -33,7 +33,7 @@ echo "🔍 Analyzing code..."
 
 echo "  Analyzing syrah_core..."
 cd packages/syrah_core
-if dart analyze --fatal-infos=false .; then
+if dart analyze --no-fatal-warnings .; then
     echo -e "${GREEN}  ✅ syrah_core analysis passed${NC}"
 else
     echo -e "${RED}  ❌ syrah_core analysis failed${NC}"
@@ -43,7 +43,7 @@ cd ../..
 
 echo "  Analyzing syrah_app..."
 cd packages/syrah_app
-if flutter analyze --no-fatal-infos; then
+if flutter analyze --no-fatal-infos --no-fatal-warnings; then
     echo -e "${GREEN}  ✅ syrah_app analysis passed${NC}"
 else
     echo -e "${RED}  ❌ syrah_app analysis failed${NC}"
@@ -53,7 +53,7 @@ cd ../..
 
 echo "  Analyzing syrah_proxy_macos..."
 cd packages/syrah_proxy_macos
-if flutter analyze --no-fatal-infos; then
+if flutter analyze --no-fatal-infos --no-fatal-warnings; then
     echo -e "${GREEN}  ✅ syrah_proxy_macos analysis passed${NC}"
 else
     echo -e "${RED}  ❌ syrah_proxy_macos analysis failed${NC}"

@@ -157,6 +157,11 @@ class CurlGenerator {
           .replaceAll('\\\r\n', ' ')
           .trim();
 
+      // Must start with curl (case insensitive)
+      if (!normalized.toLowerCase().startsWith('curl ')) {
+        return null;
+      }
+
       // Extract URL - try single quotes, double quotes, or unquoted
       final urlMatchSingle = RegExp(r"'([^']+)'$").firstMatch(normalized);
       final urlMatchDouble = RegExp(r'"([^"]+)"$').firstMatch(normalized);

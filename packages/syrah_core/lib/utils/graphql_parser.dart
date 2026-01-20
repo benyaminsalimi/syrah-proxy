@@ -50,8 +50,10 @@ class GraphQLParser {
     if (contentType.contains('application/graphql')) return true;
 
     // Check for GraphQL JSON payload
+    bool isValidJson = false;
     try {
       final json = jsonDecode(body);
+      isValidJson = true;
       if (json is Map) {
         // Standard GraphQL request has 'query' field
         if (json.containsKey('query')) return true;
@@ -64,13 +66,17 @@ class GraphQLParser {
       // Not JSON
     }
 
-    // Check for raw GraphQL query
-    final trimmed = body.trim();
-    if (trimmed.startsWith('query ') ||
-        trimmed.startsWith('mutation ') ||
-        trimmed.startsWith('subscription ') ||
-        trimmed.startsWith('{')) {
-      return true;
+    // Check for raw GraphQL query (only if not valid JSON)
+    // Raw GraphQL queries start with query/mutation/subscription keywords
+    // or with { for anonymous queries (but not JSON objects)
+    if (!isValidJson) {
+      final trimmed = body.trim();
+      if (trimmed.startsWith('query ') ||
+          trimmed.startsWith('mutation ') ||
+          trimmed.startsWith('subscription ') ||
+          trimmed.startsWith('{')) {
+        return true;
+      }
     }
 
     return false;

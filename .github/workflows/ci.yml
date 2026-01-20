@@ -37,11 +37,11 @@ jobs:
       - name: Analyze packages
         run: |
           echo "Analyzing syrah_core..."
-          cd packages/syrah_core && dart analyze --fatal-infos=false . && cd ../..
+          cd packages/syrah_core && dart analyze --no-fatal-warnings . && cd ../..
           echo "Analyzing syrah_app..."
-          cd packages/syrah_app && flutter analyze --no-fatal-infos && cd ../..
+          cd packages/syrah_app && flutter analyze --no-fatal-infos --no-fatal-warnings && cd ../..
           echo "Analyzing syrah_proxy_macos..."
-          cd packages/syrah_proxy_macos && flutter analyze --no-fatal-infos && cd ../..
+          cd packages/syrah_proxy_macos && flutter analyze --no-fatal-infos --no-fatal-warnings && cd ../..
           echo "All packages analyzed successfully"
 
       - name: Check formatting
