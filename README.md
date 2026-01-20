@@ -33,9 +33,6 @@ SyrahProxy is a full-featured HTTP/HTTPS debugging proxy application built with 
 - **Map Local** - Mock responses using local files
 - **Map Remote** - Redirect traffic to alternative endpoints
 - **Scripting** - JavaScript-based request/response manipulation
-- **WebSocket Debugging** - Real-time WebSocket protocol support
-- **Diff Tool** - Side-by-side request/response comparison
-- **Network Throttling** - Simulate slow network conditions
 - **Android Support** - Android app coming soon
 
 ## Screenshots
