@@ -349,6 +349,10 @@ class HomeController extends StateNotifier<HomeState> {
   /// Stop the proxy server
   Future<void> stopProxy() async {
     try {
+      // Disable system proxy if it's enabled
+      if (state.isSystemProxyEnabled) {
+        await disableSystemProxy();
+      }
       await _bridge.stop();
       state = state.copyWith(isProxyRunning: false, error: null);
     } catch (e) {
@@ -555,8 +559,19 @@ class HomeController extends StateNotifier<HomeState> {
     return null;
   }
 
+  /// Cleanup when app is closing - ensures system proxy is disabled
+  Future<void> cleanup() async {
+    if (state.isSystemProxyEnabled) {
+      await disableSystemProxy();
+    }
+    if (state.isProxyRunning) {
+      await _bridge.stop();
+    }
+  }
+
   @override
   void dispose() {
+    // Note: cleanup() should be called before dispose for async operations
     _flowSubscription?.cancel();
     _interceptedSubscription?.cancel();
     super.dispose();
@@ -574,10 +589,6 @@ final homeControllerProvider =
     StateNotifierProvider<HomeController, HomeState>((ref) {
   final bridge = ref.watch(mitmproxyBridgeProvider.notifier);
   final controller = HomeController(bridge);
-  // Auto-start proxy after a small delay to avoid modifying providers during initialization
-  Future.delayed(const Duration(milliseconds: 100), () {
-    controller.startProxy();
-  });
   return controller;
 });
 

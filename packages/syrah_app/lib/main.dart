@@ -33,11 +33,56 @@ void main() async {
             TrayService.instance.setSystemProxyEnabled(state.isSystemProxyEnabled);
           }
 
-          return const SyrahApp();
+          return _AppLifecycleWrapper(child: const SyrahApp());
         },
       ),
     ),
   );
+}
+
+/// Wrapper widget that handles app lifecycle events
+class _AppLifecycleWrapper extends ConsumerStatefulWidget {
+  final Widget child;
+
+  const _AppLifecycleWrapper({required this.child});
+
+  @override
+  ConsumerState<_AppLifecycleWrapper> createState() => _AppLifecycleWrapperState();
+}
+
+class _AppLifecycleWrapperState extends ConsumerState<_AppLifecycleWrapper> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('[AppLifecycle] State changed to: $state');
+    if (state == AppLifecycleState.detached) {
+      // App is being terminated - cleanup system proxy
+      _performCleanup();
+    }
+  }
+
+  Future<void> _performCleanup() async {
+    print('[AppLifecycle] Performing cleanup...');
+    final controller = ref.read(homeControllerProvider.notifier);
+    await controller.cleanup();
+    print('[AppLifecycle] Cleanup complete');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
 }
 
 void _setupTrayCallbacks(WidgetRef ref) {
@@ -51,5 +96,8 @@ void _setupTrayCallbacks(WidgetRef ref) {
     // Bring app to front
     // This would require platform-specific code
   };
-  tray.onQuitApp = () => SystemNavigator.pop();
+  tray.onQuitApp = () async {
+    await controller.cleanup();
+    SystemNavigator.pop();
+  };
 }

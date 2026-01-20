@@ -100,12 +100,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onTap: () => _showFilterEditor(context, false),
               ),
               const _ToggleSettingsTile(
-                title: 'Capture WebSocket',
-                subtitle: 'Record WebSocket messages',
-                settingKey: 'captureWebSocket',
-                defaultValue: true,
-              ),
-              const _ToggleSettingsTile(
                 title: 'Capture Binary Bodies',
                 subtitle: 'Store image and binary content',
                 settingKey: 'captureBinaryBodies',

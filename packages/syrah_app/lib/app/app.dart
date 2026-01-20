@@ -56,7 +56,6 @@ class _SyrahAppWithMenuBar extends ConsumerWidget {
               label: 'About SyrahProxy',
               onSelected: () => _showAboutDialog(context),
             ),
-            const PlatformMenuItemGroup(members: []),
             PlatformMenuItem(
               label: 'Settings...',
               shortcut: const SingleActivator(LogicalKeyboardKey.comma, meta: true),
@@ -64,11 +63,13 @@ class _SyrahAppWithMenuBar extends ConsumerWidget {
                 // Navigate to settings using GoRouter
               },
             ),
-            const PlatformMenuItemGroup(members: []),
             PlatformMenuItem(
               label: 'Quit SyrahProxy',
               shortcut: const SingleActivator(LogicalKeyboardKey.keyQ, meta: true),
-              onSelected: () => SystemNavigator.pop(),
+              onSelected: () async {
+                await controller.cleanup();
+                SystemNavigator.pop();
+              },
             ),
           ],
         ),
@@ -82,13 +83,11 @@ class _SyrahAppWithMenuBar extends ConsumerWidget {
               shortcut: const SingleActivator(LogicalKeyboardKey.keyR, meta: true),
               onSelected: () => controller.toggleProxy(),
             ),
-            const PlatformMenuItemGroup(members: []),
             PlatformMenuItem(
               label: isSystemProxyEnabled ? 'Disable System Proxy' : 'Enable System Proxy',
               shortcut: const SingleActivator(LogicalKeyboardKey.keyS, meta: true, shift: true),
               onSelected: () => controller.toggleSystemProxy(),
             ),
-            const PlatformMenuItemGroup(members: []),
             PlatformMenuItem(
               label: 'Trust Certificate...',
               onSelected: () => _showCertificateDialog(context),
@@ -140,7 +139,6 @@ class _SyrahAppWithMenuBar extends ConsumerWidget {
               shortcut: const SingleActivator(LogicalKeyboardKey.keyK, meta: true),
               onSelected: () => controller.clearFlows(),
             ),
-            const PlatformMenuItemGroup(members: []),
             PlatformMenuItem(
               label: 'Clear Pins',
               onSelected: () => controller.clearPins(),
