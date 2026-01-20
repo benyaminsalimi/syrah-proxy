@@ -860,13 +860,6 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
-  syrah_proxy_android:
-    dependency: "direct main"
-    description:
-      path: "../syrah_proxy_android"
-      relative: true
-    source: path
-    version: "1.0.0"
   syrah_proxy_macos:
     dependency: "direct main"
     description:

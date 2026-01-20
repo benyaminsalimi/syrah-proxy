@@ -115,9 +115,8 @@ class SyrahBridge:
     async def _ws_server_main(self):
         """Main WebSocket server coroutine."""
         try:
-            # Listen on all interfaces so Android devices can connect
-            async with ws_serve(self._handle_client, "0.0.0.0", self.port):
-                logger.info(f"Syrah WebSocket server listening on ws://0.0.0.0:{self.port}")
+            async with ws_serve(self._handle_client, "localhost", self.port):
+                logger.info(f"Syrah WebSocket server listening on ws://localhost:{self.port}")
                 await asyncio.Future()  # Run forever
         except Exception as e:
             logger.error(f"WebSocket server error: {e}")

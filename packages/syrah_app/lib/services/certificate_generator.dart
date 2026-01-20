@@ -183,6 +183,49 @@ class CertificateGenerator {
   /// Delete existing certificates
   Future<bool> deleteCertificates() async {
     try {
+      // Try to remove from Keychain (requires user permission)
+      // This removes the trusted certificate so regeneration works properly
+      if (Platform.isMacOS) {
+        final home = Platform.environment['HOME'];
+        print('[CertificateGenerator] Attempting to remove old certificate from Keychain...');
+
+        // Try to delete from login keychain (most common location)
+        var result = await Process.run('security', [
+          'delete-certificate',
+          '-c', 'SyrahProxy CA',
+          '-t',  // Also delete trust settings
+          '$home/Library/Keychains/login.keychain-db',
+        ]);
+        print('[CertificateGenerator] Login keychain delete result: ${result.exitCode}');
+
+        // Also try without -db suffix (older macOS)
+        result = await Process.run('security', [
+          'delete-certificate',
+          '-c', 'SyrahProxy CA',
+          '-t',
+          '$home/Library/Keychains/login.keychain',
+        ]);
+
+        // Try default keychain search
+        result = await Process.run('security', [
+          'delete-certificate',
+          '-c', 'SyrahProxy CA',
+          '-t',
+        ]);
+        print('[CertificateGenerator] Default keychain delete result: ${result.exitCode}');
+
+        // System keychain needs sudo, will likely fail but try anyway
+        await Process.run('security', [
+          'delete-certificate',
+          '-c', 'SyrahProxy CA',
+          '-t',
+          '/Library/Keychains/System.keychain',
+        ]);
+
+        print('[CertificateGenerator] Keychain cleanup attempted');
+      }
+
+      // Delete certificate files
       final dir = Directory(certDirectory);
       if (await dir.exists()) {
         await dir.delete(recursive: true);

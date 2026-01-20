@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../services/certificate_service.dart';
 import '../home/home_controller.dart';
 
 /// Settings screen with proxy configuration, certificates, and app settings
@@ -21,6 +22,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _sslInterception = true;
   String? _certPath;
   bool _certExists = false;
+  bool _certTrusted = false;
+  Map<String, String>? _certInfo;
+  final _certService = CertificateService.instance;
 
   @override
   void initState() {
@@ -29,15 +33,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _checkCertificate() async {
-    final home = Platform.environment['HOME'];
-    if (home != null) {
-      final certPath = '$home/.mitmproxy/mitmproxy-ca-cert.pem';
-      final exists = await File(certPath).exists();
-      setState(() {
-        _certPath = certPath;
-        _certExists = exists;
-      });
-    }
+    final exists = await _certService.syrahCertificateExists();
+    final trusted = await _certService.isCertificateTrusted();
+    final info = await _certService.getCertificateInfo();
+    final path = _certService.certificatePath;
+
+    setState(() {
+      _certPath = path;
+      _certExists = exists;
+      _certTrusted = trusted;
+      _certInfo = info;
+    });
   }
 
   @override
@@ -182,38 +188,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _buildCertificateInfo() {
+    final statusColor = _certExists
+        ? (_certTrusted ? AppColors.success : AppColors.warning)
+        : AppColors.error;
+    final statusIcon = _certExists
+        ? (_certTrusted ? Icons.verified : Icons.warning_amber)
+        : Icons.cancel;
+    final statusText = _certExists
+        ? (_certTrusted ? 'Trusted' : 'Not Trusted')
+        : 'Not Generated';
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: (_certExists ? AppColors.success : AppColors.warning).withOpacity(0.1),
+          color: statusColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          _certExists ? Icons.verified : Icons.warning,
-          color: _certExists ? AppColors.success : AppColors.warning,
-          size: 20,
-        ),
+        child: Icon(statusIcon, color: statusColor, size: 20),
       ),
-      title: const Text('CA Certificate'),
+      title: const Text('SyrahProxy CA Certificate'),
       subtitle: Text(
         _certExists
-            ? 'Certificate installed at ~/.mitmproxy/'
-            : 'Certificate not found - will be generated on first run',
+            ? (_certInfo?['subject'] ?? 'Certificate at ~/.syrah/')
+            : 'Click "Trust Certificate" in toolbar to generate',
       ),
-      trailing: _certExists
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'Installed',
-                style: TextStyle(color: AppColors.success, fontSize: 12),
-              ),
-            )
-          : null,
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: statusColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          statusText,
+          style: TextStyle(color: statusColor, fontSize: 12),
+        ),
+      ),
+      onTap: () => CertificateService.showInstallDialog(context),
     );
   }
 
@@ -240,9 +251,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: FilledButton.icon(
-              onPressed: _certExists ? _exportCertificate : null,
-              icon: const Icon(Icons.download, size: 18),
-              label: const Text('Export'),
+              onPressed: () => CertificateService.showInstallDialog(context).then((_) => _checkCertificate()),
+              icon: Icon(_certExists ? Icons.refresh : Icons.add, size: 18),
+              label: Text(_certExists ? 'Manage' : 'Generate'),
             ),
           ),
         ],
@@ -418,12 +429,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _openCertFolder() async {
-    if (_certPath != null) {
-      final folder = File(_certPath!).parent.path;
-      if (Platform.isMacOS) {
-        await Process.run('open', [folder]);
-      }
-    }
+    await _certService.openCertificateFolder();
   }
 
   void _exportCertificate() async {

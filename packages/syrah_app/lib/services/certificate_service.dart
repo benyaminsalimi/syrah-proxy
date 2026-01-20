@@ -61,32 +61,33 @@ class CertificateService {
     if (!Platform.isMacOS) return false;
 
     try {
-      // Check for SyrahProxy CA first
-      var result = await Process.run('security', [
-        'find-certificate',
-        '-c',
-        'SyrahProxy CA',
-        '/Library/Keychains/System.keychain'
-      ]);
-
-      if (result.exitCode == 0) {
-        // Check if it's trusted
-        final verifyResult = await Process.run('security', [
-          'verify-cert',
-          '-c', _generator.caCertPath,
-        ]);
-        return verifyResult.exitCode == 0;
+      // First check if our certificate file exists
+      if (!await _generator.certificatesExist()) {
+        return false;
       }
 
-      // Fallback: check for mitmproxy cert
-      result = await Process.run('security', [
-        'find-certificate',
-        '-c',
-        'mitmproxy',
-        '/Library/Keychains/System.keychain'
+      // Get the fingerprint of our current certificate file
+      final certInfo = await _generator.getCertificateInfo();
+      final ourFingerprint = certInfo?['fingerprint'];
+      if (ourFingerprint == null) {
+        print('[CertificateService] Could not get fingerprint of our certificate');
+        return false;
+      }
+
+      // Use security verify-cert to check if our specific certificate is trusted
+      final verifyResult = await Process.run('security', [
+        'verify-cert',
+        '-c', _generator.caCertPath,
       ]);
 
-      return result.exitCode == 0;
+      if (verifyResult.exitCode == 0) {
+        print('[CertificateService] Certificate verified as trusted');
+        return true;
+      }
+
+      // If verify-cert failed, the certificate is not trusted
+      print('[CertificateService] Certificate not trusted: ${verifyResult.stderr}');
+      return false;
     } catch (e) {
       print('[CertificateService] Error checking trust status: $e');
       return false;
@@ -627,13 +628,17 @@ class _CertificateDialogState extends State<_CertificateDialog> {
       setState(() {
         _certExists = true;
         _certInfo = info;
+        _isTrusted = false; // New certificate is not trusted yet
         _isGenerating = false;
       });
+
+      // Check if the new certificate is already trusted (unlikely but possible)
+      await _checkTrustStatus();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('SyrahProxy CA certificate generated successfully!'),
+            content: Text('SyrahProxy CA certificate generated successfully! Please trust it in Keychain.'),
             behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.green,
           ),
@@ -682,6 +687,7 @@ class _CertificateDialogState extends State<_CertificateDialog> {
       setState(() {
         _certExists = false;
         _certInfo = null;
+        _isTrusted = false;
       });
       await _generateCertificate();
     }
