@@ -8,7 +8,6 @@ on:
 
 env:
   FLUTTER_VERSION: '3.27.4'
-  JAVA_VERSION: '17'
 
 jobs:
   analyze:
@@ -112,8 +111,8 @@ jobs:
           flags: syrah_app
 
   build-macos:
-    name: Build macOS
-    runs-on: macos-latest
+    name: Build macOS (Apple Silicon)
+    runs-on: macos-14
     needs: [analyze, test-core]
     steps:
       - uses: actions/checkout@v4
@@ -147,63 +146,10 @@ jobs:
           name: macos-build
           path: packages/syrah_app/build/macos/Build/Products/Release/
 
-  build-android:
-    name: Build Android
-    runs-on: ubuntu-latest
-    needs: [analyze, test-core]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: ${{ env.JAVA_VERSION }}
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Install Melos
-        run: dart pub global activate melos
-
-      - name: Bootstrap
-        run: melos bootstrap
-
-      - name: Generate code for syrah_core
-        run: |
-          cd packages/syrah_core
-          dart run build_runner build --delete-conflicting-outputs
-
-      - name: Build Android APK
-        run: |
-          cd packages/syrah_app
-          flutter build apk --release
-
-      - name: Build Android App Bundle
-        run: |
-          cd packages/syrah_app
-          flutter build appbundle --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: packages/syrah_app/build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-aab
-          path: packages/syrah_app/build/app/outputs/bundle/release/app-release.aab
-
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [build-macos, build-android]
+    needs: [build-macos]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
@@ -215,18 +161,6 @@ jobs:
         with:
           name: macos-build
           path: dist/macos
-
-      - name: Download Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: android-apk
-          path: dist/android
-
-      - name: Download Android AAB
-        uses: actions/download-artifact@v4
-        with:
-          name: android-aab
-          path: dist/android
 
       - name: Get version
         id: version
@@ -241,7 +175,6 @@ jobs:
           name: Release v${{ steps.version.outputs.version }}
           draft: true
           files: |
-            dist/android/app-release.apk
-            dist/android/app-release.aab
+            dist/macos/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
