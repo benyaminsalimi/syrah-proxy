@@ -29,7 +29,7 @@ dependencies:
   isar_flutter_libs: ^3.1.0
 
   # JavaScript Runtime for Scripting
-  flutter_js: ^0.8.0
+  flutter_js: ^0.8.7
 
   # Code Highlighting
   flutter_highlight: ^0.7.0
@@ -69,7 +69,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.0
   freezed: ^2.4.0
   json_serializable: ^6.7.0
