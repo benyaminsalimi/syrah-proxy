@@ -55,7 +55,7 @@ dependencies:
   web_socket_channel: ^3.0.0
 
   # Process management
-  process_run: ^1.2.0
+  process_run: ^1.3.0
 
   # macOS status bar icon
   tray_manager: ^0.5.0
