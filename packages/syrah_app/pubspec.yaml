@@ -39,7 +39,7 @@ dependencies:
   diff_match_patch: ^0.4.1
 
   # Archive for HAR
-  archive: ^4.0.0
+  archive: ^4.0.8
 
   # File System
   path_provider: ^2.1.0
